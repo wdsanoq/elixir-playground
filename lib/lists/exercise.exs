@@ -17,6 +17,13 @@ defmodule MyList do
   def caesar([head | tail], n) do
     [head + n | caesar(tail, n)]
   end
+
+  def span(from, to) when from > to, do: []
+
+  def span(from, to) do
+    [from | span(from + 1, to)]
+  end
 end
 
 IO.puts(MyList.caesar('ryvkve', 13))
+IO.inspect(MyList.span(10, 20))
