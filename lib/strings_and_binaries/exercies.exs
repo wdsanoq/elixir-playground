@@ -26,8 +26,13 @@ defmodule MyString do
   defp parse_operator([?- | rest]), do: {&(&1 - &2), rest}
   defp parse_operator([?* | rest]), do: {&(&1 * &2), rest}
   defp parse_operator([?/ | rest]), do: {&div(&1, &2), rest}
+
+  def center(strings) do
+    Enum.each(strings, &IO.puts(&1))
+  end
 end
 
 IO.inspect(MyString.printable_ascii('test!'))
 IO.inspect(MyString.anagram?('cat', 'act'))
 IO.inspect(MyString.calculate('123 + 27'))
+MyString.center(["cat", "zebra", "elephant"])
