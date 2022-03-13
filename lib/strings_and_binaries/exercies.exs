@@ -30,9 +30,14 @@ defmodule MyString do
   def center(strings) do
     Enum.each(strings, &IO.puts(&1))
   end
+
+  def capitalize_sentences(string) do
+    String.replace(string, ~r/(.)\w*\.?\s/, &String.capitalize(&1))
+  end
 end
 
 IO.inspect(MyString.printable_ascii('test!'))
 IO.inspect(MyString.anagram?('cat', 'act'))
 IO.inspect(MyString.calculate('123 + 27'))
 MyString.center(["cat", "zebra", "elephant"])
+IO.inspect(MyString.capitalize_sentences("oh. a DOG. woof. "))
