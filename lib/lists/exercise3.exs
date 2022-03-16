@@ -19,9 +19,42 @@ defmodule MyList do
   end
 end
 
+defmodule CSV do
+  defp convert_types(value) do
+    cond do
+      Regex.match?(~r{^\d+$}, value) -> String.to_integer(value)
+      Regex.match?(~r{^\d+\.\d+$}, value) -> String.to_float(value)
+      <<?:::utf8, name::binary>> = value -> String.to_atom(name)
+      true -> value
+    end
+  end
+
+  defp create_row(headers, csv_line) do
+    row = parse_csv(csv_line, &convert_types(&1))
+    Enum.zip(headers, row)
+  end
+
+  defp parse_csv(string, mapper) do
+    string
+    |> String.trim()
+    |> String.split(~r{,\s*})
+    |> Enum.map(mapper)
+  end
+
+  def parse_header(csv_line) do
+    parse_csv(csv_line, &String.to_atom(&1))
+  end
+
+  def parse_file(path) do
+    file = File.open!(path)
+    header = parse_header(IO.read(file, :line))
+    Enum.map(IO.stream(file, :line), &create_row(header, &1))
+  end
+end
+
 IO.inspect(MyList.primes_up_to(40))
 
-tax_rates = [NC: 0.075, TX: 0.08]
+tax_rates = [N: 0.075, TX: 0.08]
 
 orders = [
   [id: 123, ship_to: :NC, net_amount: 100.00],
@@ -35,3 +68,6 @@ orders = [
 ]
 
 IO.inspect(MyList.get_taxes(orders, tax_rates))
+
+csv_orders = CSV.parse_file("lib/lists/data")
+IO.inspect(MyList.get_taxes(csv_orders, tax_rates))
